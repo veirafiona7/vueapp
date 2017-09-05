@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">  
+    	<meta name="viewport" content="width=device-width, initial-scale=1"> 
+		<title></title>
+		<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css"> 
+
+</script>
+
+	</head>
+<body>
+
+<div class="container" id="app">
+	<div class="panel panel-default">
+		<div class="panel-heading">购物车--{{message}}</div>
+		<table class="table table-bordered">
+			<tr v-show="arr.length!==0">
+				<th>ID</th>
+				
+				<th>订单编号</th>
+				<th>订单名称</th>
+				<th>购物数量</th>
+				<th>产品单价</th>
+				<th>小计</th>
+				<th>操作</th>				
+			</tr>
+			<tr v-for="(item,index) in arr">
+				<td>{{index+1}}</td>
+				<td>DN{{item.id}}</td>
+				<td>{{item.name}}</td>
+				<td>
+					<div class="input-group">
+						<span class="input-group-addon" @click="subtract(index)">-</span>
+						<input type="text" v-model="item.amount" class="form-control" />
+						<span class="input-group-addon" @click="add(index)">+</span>
+					</div>
+				</td>
+				<td>{{item.price}}</td>
+				<td>{{item.amount*item.price}}</td>
+				<td>
+					<button class="btn btn-danger" data-toggle="modal" data-target="#layer" @click="nowIndex=index" >移除</button>
+				</td>				
+			</tr>
+			<tr v-show="arr.length!==0">
+				<td>总价格</td>
+				<td colspan="5">{{totalPrice}}</td>
+				<td><button class="btn btn-danger" data-toggle="modal" data-target="#layer" @click="nowIndex=-2">清空购物车</button></td>
+			</tr>		
+		</table>	
+		<div class="alert alert-warning" v-if="arr.length==0" data-dismiss="alert">您的购物车现在没有东西了</div>		
+	</div>
+
+<div role="dialong" class="modal fade bs-example-modal-sm" id="layer" aria-labelledby="myModalLabel">
+	<div class="modal-dialog ">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span> </button>
+				<h4 class="modal-title" id="myModalLabel">确认删除{{nowIndex==-2?"全部":nowIndex+1}}么</h4>
+			</div>
+			<div class="modal-body text-right">
+				<button class="btn btn-primary btn-sm" data-dismiss="modal">取消</button>
+				<button class="btn btn-danger btn-sm" data-dismiss="modal" @click="remove(nowIndex)">确定</button>
+			</div>
+			
+		</div>
+		
+	</div>
+</div>
+
+
+</div>
+ 	
+<script type="text/javascript">
+
+window.onload=function(){
+
+	var app=new Vue({
+		el:"#app",
+		data:{	
+			nowIndex:-10,
+			message:"hello~",	
+		
+			arr:[
+				{id:"001",name:"香蕉",price:"5000",amount:"2"},
+				{id:"002",name:"牛奶",price:"4000",amount:"2"},
+				{id:"003",name:"煎饼",price:"4000",amount:"2"},
+				{id:"004",name:"果子",price:"4000",amount:"2"},
+				{id:"005",name:"来一套",price:"4000",amount:"2"}
+				],
+
+		},
+		methods:{
+			remove:function(n){
+				if(n==-2){
+					this.arr=[];
+				}
+				else{
+					this.arr.splice(n,1);//选择删除从第几个开始，删除个数
+				}	
+			},
+			add:function(index){
+				this.arr[index].amount++;
+			},
+			subtract:function(index){
+				if(this.arr[index].amount<=1){
+					if(confirm("您确定删除该商品吗？")){
+						this.arr.splice(index,1);
+					}else{
+						return;
+					}
+				}
+				this.arr[index].amount--
+			}
+
+
+		},
+		 
+		computed:{//计算总价
+			totalPrice:function(){
+				var total=0;
+				for(var i=0;i<this.arr.length;i++){
+					total+=this.arr[i].amount*this.arr[i].price;
+				}
+				return total;
+			}
+		}
+
+	})
+
+}
+</script>
+
+</body></html>
+<script src="http://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>  
+<script src="http://cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>   
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.12/vue.js"></script>
+<script src="vue.js"></script>
+<script src="https://unpkg.com/vue"></script> 
